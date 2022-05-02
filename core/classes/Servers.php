@@ -169,7 +169,9 @@ class Servers {
 
 								echo '<div class="input-group input-group-sm" style="width: 100%;">';
 										echo '<span class="input-group-addon input-label-' . strtolower($server->status_text) . '">' . $server->status_text . '</span>';
-										echo '<input type="text" class="form-control" value="' . $server->address . ":" . $server->connection_port . '">';
+										if ($server->connection_port != '25565') {
+											echo '<input type="text" class="form-control" value="' . $server->address . ":" . $server->connection_port . '">';
+										} else echo '<input type="text" class="form-control" value="' . $server->address . '">';
 								echo '</div>';
 								
 							}
@@ -240,13 +242,17 @@ class Servers {
 					</ul>
 				</li>
 
+				<?php 
+				global $settings;
+				if($settings->premium) { ?>
 				<li class="dropdown active">
 					<a class="dropdown-toggle" data-toggle="dropdown" href="#"><?php echo $language['misc']['filter_highlight']; ?><b class="caret"></b></a>
 					<ul class="dropdown-menu">
 						<li><a href="<?php echo $this->pagination->link . $filter_highlight . '&filter_highlight=1' ?>"><?php echo $language['misc']['filter_yes']; ?></a></li>
 						<li><a href="<?php echo $this->pagination->link . $filter_highlight . '&filter_highlight=0' ?>"><?php echo $language['misc']['filter_no']; ?></a></li>
 					</ul>
-				</li>
+				</li>	
+				<?php } ?>
 
 				<li class="dropdown active">
 					<a class="dropdown-toggle" data-toggle="dropdown" href="#"><?php echo $language['misc']['filter_status']; ?><b class="caret"></b></a>

@@ -8,6 +8,8 @@ if(!empty($_POST)) {
 
 	/* Define some variables */
 	$address = filter_var($_POST['address'], FILTER_SANITIZE_STRING);
+	$address_splited = explode(":", $address);
+	$address = $address_splited[0];
 	$connection_port = (int) $_POST['connection_port'];
 	$query_port = (int) $_POST['query_port'];
 	$date = new DateTime();
@@ -42,7 +44,7 @@ if(!empty($_POST)) {
 		$category = new StdClass;
 		$category->exists = false;
 	}
-
+	
 	/* If the category doesn't exist, set an error message.If it exists, continue with the checks */
 	if(!$category->exists) {
 		$_SESSION['error'][] = $language['errors']['category_not_found'];
@@ -54,13 +56,21 @@ if(!empty($_POST)) {
 
 		if(!$info && $query->status) {
 			$_SESSION['error'][] = $language['errors']['server_no_data'];
-		} else 
-		if(!$info && !$query->status) {
+		} else {
+		$arrContextOptions=array(
+			"ssl"=>array(
+				"verify_peer"=>false,
+				"verify_peer_name"=>false,
+			),
+		);
+		$info = json_decode(file_get_contents('http://api.mcsrvstat.us/2/' . $address, false, stream_context_create($arrContextOptions)));
+		
+		if(!$info->online) {
 			$_SESSION['error'][] = $language['errors']['server_offline'];
 		}
 
+	  }
 	}
-
 	/* Check for the required fields */
 	foreach($_POST as $key=>$value) {
 		if(empty($value) && in_array($key, $required_fields) == true) {

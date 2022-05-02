@@ -440,82 +440,44 @@ function server_update($server) {
 	global $database;
 	global $settings;
 	global $language;
-	global $query;
-	if($server->cachetime > time() - $settings->cache_reset_time) {
+	//global $query;
+	if(!($server->cachetime > time() - $settings->cache_reset_time)) {
 
-		$query->status = $server->status;
-
-		/* Decode the details content into an array */
-		$server->details = json_decode($server->details, true);
-
-		$info = array(
-					'general' => array(
-						'online_players' => array(
-							'name' => $language['server']['general_online_players'],
-							'icon' => 'user',
-							'value' => $server->online_players
-						),
-
-						'maximum_online_players' => array(
-							'name' => $language['server']['general_maximum_online_players'],
-							'icon' => 'user',
-							'value' => $server->maximum_online_players
-						),
-
-						'motd' => array(
-							'name' => $language['server']['motd'],
-							'icon' => 'tasks',
-							'value' => $server->motd
-						),
-
-						'server_version' => array(
-							'name' => $language['server']['server_version'],
-							'icon' => 'wrench',
-							'value' => $server->server_version
-						)
-					),
-
-					'players' => $server->details['players'],
-				);
-
-		$information = $info;
-		return $info;
-
-	} else {
 		
-		/* Query the server with a specific protocol */
-		$query = new Query($server->address, $server->query_port);
-		$information  = $query->query();
-
-		if(!$information) {
-			$info = $query->return_false();
-		} else {
-			$info = $information;
-		}
-
-
-		/* JSON Encode the Players & Details so they can be inserted into the database */
-		$details = array(
-			'players' => $info['players'],
+		$arrContextOptions=array(
+			"ssl"=>array(
+				"verify_peer"=>false,
+				"verify_peer_name"=>false,
+			),
 		);
-		$details = json_encode($details);
-
-		/* Update the cache depending on the  status */
-		if($query->status){
-			$stmt = $database->prepare("UPDATE `servers` SET `status` = ?, `online_players` = ?, `maximum_online_players` = ?, `motd` = ?, `server_version` = ?, `details` = ?, `cachetime` = unix_timestamp() WHERE `server_id` = {$server->server_id}");
-			$stmt->bind_param('ssssss', $query->status, $info['general']['online_players']['value'], $info['general']['maximum_online_players']['value'], $info['general']['motd']['value'], $info['general']['server_version']['value'], $details);
+		
+		$status = json_decode(file_get_contents('http://api.mcsrvstat.us/2/' . $server->address, false, stream_context_create($arrContextOptions)));
+		
+		if ($status->online) {
+			$motd = "";
+			foreach ($status->motd->clean as $motd1) {
+				$motd = $motd . $motd1;
+				
+			}	
+			/*$server->motd = $motd;
+			$server->online_players = $status->players->online;
+			$server->maximum_online_players = $status->players->max;
+			$server->server_version = $status->version;*/
+			
+			
+		}
+		if($status->online){
+			$stmt = $database->prepare("UPDATE `servers` SET `status` = ?, `online_players` = ?, `maximum_online_players` = ?, `motd` = ?, `server_version` = ?, `cachetime` = unix_timestamp() WHERE `server_id` = {$server->server_id}");
+			$stmt->bind_param('sssss', $status->online, $status->players->online, $status->players->max, $motd, $status->version);
 		} else {
-			$stmt = $database->prepare("UPDATE `servers` SET `status` = ?, `online_players` = ?, `maximum_online_players` = ?, `details` = ?, `cachetime` = unix_timestamp() WHERE `server_id` = {$server->server_id}");
-			$stmt->bind_param('ssss', $query->status, $info['general']['online_players']['value'], $info['general']['maximum_online_players']['value'], $details);
+			$stmt = $database->prepare("UPDATE `servers` SET `status` = ?, `online_players` = ?, `maximum_online_players` = ?,`cachetime` = unix_timestamp() WHERE `server_id` = {$server->server_id}");
+			$stmt->bind_param('sss', $status->online, $status->players->online, $status->players->max);
 		}
 		$stmt->execute();
 
-		/* Decode the MOTD */
-		$info['general']['motd']['value'] = minecraft::decodeMotd($info['general']['motd']['value']);
-		return $info;
-	}	
+	
 		
 		
-	}
+} }
 
 ?>

@@ -51,7 +51,12 @@ class Query {
 	public function connect() {
 
 		/* Try and connect to the server */
-		$this->socket = @fsockopen($this->protocol->connectionType . $this->address, $this->port, $errno, $errstr, $this->timeout);
+		try {
+			$this->socket = @fsockopen($this->protocol->connectionType . $this->address, $this->port, $errno, $errstr, $this->timeout);
+
+		} catch(Exception $e) {
+			throw new Exception("Sockets problem " . $this->socket);
+		}
 
 		/* Set the timeout */
 		@stream_set_timeout($this->socket, $this->timeout);

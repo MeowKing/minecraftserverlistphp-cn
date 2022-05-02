@@ -47,6 +47,8 @@ if(!empty($_POST)) {
 	/* Define some variables */
 	$name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
 	$address = filter_var($_POST['address'], FILTER_SANITIZE_STRING);
+	$address_splited = explode(":", $address);
+	$address = $address_splited[0];
 	$connection_port = (int) $_POST['connection_port'];
 	$query_port = (int) $_POST['query_port'];
 	$category_id = (int) $_POST['category_id'];

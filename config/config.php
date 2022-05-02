@@ -2,21 +2,21 @@
 
 return [
     'subject' => [
-        'prefix' => '[Support]'
+        'prefix' => '[支持]'
     ],
     'emails' => [
-        'to'   => 'support@example.com',
+        'to'   => 'admin@mcwarm.ml',
         'from' => 'support@example.com'
     ],
     'messages' => [
-        'error'   => 'Something wrong. Try again.',
-        'success' => 'Success :).'
+        'error'   => '出错了,请重试.',
+        'success' => '成功 :).'
     ],
     'fields' => [
-        'name'     => 'Name',
-        'email'    => 'Email',
-        'subject'  => 'Subject',
-        'message'  => 'Text',
-        'btn-send' => 'Send'
+        'name'     => '姓名',
+        'email'    => '邮箱',
+        'subject'  => '类型',
+        'message'  => '信息',
+        'btn-send' => '发送'
     ]
 ];

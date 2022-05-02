@@ -51,6 +51,8 @@ if(!empty($_POST)) {
 	/* Define some variables */
 	$name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
 	$address = filter_var($_POST['address'], FILTER_SANITIZE_STRING);
+	$address_splited = explode(":", $address);
+	$address = $address_splited[0];
 	$connection_port = (int) $_POST['connection_port'];
 	$query_port = (int) $_POST['query_port'];
 	$category_id = (int) $_POST['category_id'];
@@ -214,7 +216,7 @@ initiate_html_columns();
 	<div class="form-group">
 		<label><?php echo $language['forms']['server_description']; ?></label>
 		<p class="help-block"><?php echo $language['forms']['server_description_help']; ?></p>
-		<textarea name="description" class="form-control" rows="6"><?php echo $server->data->description; ?></textarea>
+		<textarea id="editorincluded" name="description" class="form-control" rows="6"><?php echo $server->data->description; ?></textarea>
 	</div>
 
 	<div class="form-group">
@@ -235,3 +237,9 @@ initiate_html_columns();
 		<br /><br />
 	</div>
 </form>
+
+<script type="text/javascript">
+	$('#editorincluded').each(function () {
+		var editor = new Jodit(this, {"buttons": "bold,italic,underline,strikethrough,eraser,ul,ol,indent,outdent,left,font,fontsize,paragraph,brush,superscript,subscript,image,video"});
+	}); 
+</script>

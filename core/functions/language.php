@@ -1,7 +1,7 @@
 <?php
 
 $path = (file_exists("languages/english.php")) ? "languages/" : "../languages/";    //languages directory
-$defLanguage = "english";    					//default language
+$defLanguage = "简体中文";    					//default language
 $lang 		 = $defLanguage; 					//current language variable
 $languages   = array();        					//store the available languages
 

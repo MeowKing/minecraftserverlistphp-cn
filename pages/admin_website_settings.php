@@ -5,6 +5,7 @@ if(!empty($_POST)) {
 	/* Define some variables */
 	$_POST['title']				 		= filter_var($_POST['title'], FILTER_SANITIZE_STRING);
 	$_POST['meta_description']	 		= filter_var($_POST['meta_description'], FILTER_SANITIZE_STRING);
+	$_POST['premium']	 				= (isset($_POST['premium'])) ? 1 : 0;
 	$_POST['analytics_code']	 		= filter_var($_POST['analytics_code'], FILTER_SANITIZE_STRING);
 	$_POST['banned_words']		 		= filter_var($_POST['banned_words'], FILTER_SANITIZE_STRING);
 	$_POST['public_key']				= filter_var($_POST['public_key'], FILTER_SANITIZE_STRING);
@@ -32,8 +33,8 @@ if(!empty($_POST)) {
 	$_POST['smtp_pass']					= filter_var($_POST['smtp_pass'], FILTER_SANITIZE_STRING);
 	/* Prepare the statement and execute query */
 	
-	$stmt = $database->prepare("UPDATE `settings` SET `title` = ?, `meta_description` = ?, `analytics_code` = ?, `banned_words` = ?, `email_confirmation` = ?, `servers_pagination` = ?, `avatar_max_size` = ?, `cover_max_size` = ?, `contact_email` = ?, `cache_reset_time` = ?, `display_offline_servers` = ?, `new_servers_visibility` = ?, `top_ads` = ?, `bottom_ads` = ?, `side_ads` = ?, `public_key` = ?, `private_key` = ?, `paypal_email` = ?, `payment_currency` = ?, `maximum_slots` = ?, `per_day_cost` = ?, `minimum_days` = ?, `maximum_days` = ?, `facebook` = ?, `twitter` = ?, `googleplus` = ?, `smtphost` = ?, `smtpport` = ?, `smtpuser` = ?, `smtppass` = ? WHERE `id` = 1");
-	$stmt->bind_param('ssssssssssssssssssssssssssssss', $_POST['title'], $_POST['meta_description'], $_POST['analytics_code'], $_POST['banned_words'], $_POST['email_confirmation'], $_POST['servers_pagination'], $_POST['avatar_max_size'], $_POST['cover_max_size'], $_POST['contact_email'], $_POST['cache_reset_time'], $_POST['display_offline_servers'], $_POST['new_servers_visibility'], $_POST['top_ads'], $_POST['bottom_ads'], $_POST['side_ads'], $_POST['public_key'], $_POST['private_key'], $_POST['paypal_email'], $_POST['payment_currency'], $_POST['maximum_slots'], $_POST['per_day_cost'], $_POST['minimum_days'], $_POST['maximum_days'], $_POST['facebook'], $_POST['twitter'], $_POST['googleplus'], $_POST['smtp_host'], $_POST['smtp_port'], $_POST['smtp_user'], $_POST['smtp_pass']);
+	$stmt = $database->prepare("UPDATE `settings` SET `title` = ?, `meta_description` = ?,`premium` = ?, `analytics_code` = ?, `banned_words` = ?, `email_confirmation` = ?, `servers_pagination` = ?, `avatar_max_size` = ?, `cover_max_size` = ?, `contact_email` = ?, `cache_reset_time` = ?, `display_offline_servers` = ?, `new_servers_visibility` = ?, `top_ads` = ?, `bottom_ads` = ?, `side_ads` = ?, `public_key` = ?, `private_key` = ?, `paypal_email` = ?, `payment_currency` = ?, `maximum_slots` = ?, `per_day_cost` = ?, `minimum_days` = ?, `maximum_days` = ?, `facebook` = ?, `twitter` = ?, `googleplus` = ?, `smtphost` = ?, `smtpport` = ?, `smtpuser` = ?, `smtppass` = ? WHERE `id` = 1");
+	$stmt->bind_param('sssssssssssssssssssssssssssssss', $_POST['title'], $_POST['meta_description'], $_POST['premium'], $_POST['analytics_code'], $_POST['banned_words'], $_POST['email_confirmation'], $_POST['servers_pagination'], $_POST['avatar_max_size'], $_POST['cover_max_size'], $_POST['contact_email'], $_POST['cache_reset_time'], $_POST['display_offline_servers'], $_POST['new_servers_visibility'], $_POST['top_ads'], $_POST['bottom_ads'], $_POST['side_ads'], $_POST['public_key'], $_POST['private_key'], $_POST['paypal_email'], $_POST['payment_currency'], $_POST['maximum_slots'], $_POST['per_day_cost'], $_POST['minimum_days'], $_POST['maximum_days'], $_POST['facebook'], $_POST['twitter'], $_POST['googleplus'], $_POST['smtp_host'], $_POST['smtp_port'], $_POST['smtp_user'], $_POST['smtp_pass']);
 	$stmt->execute();  
 	$stmt->close();
 
@@ -102,6 +103,12 @@ initiate_html_columns();
 			<div class="checkbox">
 				<label>
 					<?php echo $language['forms']['settings_email_confirmation']; ?><input type="checkbox" name="email_confirmation" <?php if($settings->email_confirmation) echo 'checked'; ?>>
+				</label>
+			</div>
+			
+			<div class="checkbox">
+				<label>
+					<?php echo $language['forms']['enable_premium']; ?><input type="checkbox" name="premium" <?php if($settings->premium) echo 'checked'; ?>>
 				</label>
 			</div>
 
